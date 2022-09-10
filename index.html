@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My First dApp</title>
+    <style>
+  body {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  div {
+    width: 20%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+    margin: 10px 0px 5px 0px;
+  }
+</style>
+  </head>
+  <body>
+    <div>
+
+
+    <h1>Creating my first Dapp</h1>
+    <p>
+      Enter your preference below
+    </p>
+    <label for="work">Enter your field of work</label>
+    <input type="text" id="work"/>
+    <button onclick="read">Read work</button>
+    <button onclick="write()">Set work</button>
+    </div>
+  </body>
+
+</html>
+<script
+src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+type="application/javascript"></script>
+<script>
+  window.ethereum.enable();  //checks if the browser has a wallet installed
+  var provider = new ethers.providers.Web3Provider(window.ethereum, "ropsten");//web3.currentProvider is the metamask wallet that helps to connect and interact with the blockchain
+  var contractaddress="0x36145164A5e67649CfF26997586d6F92EdB22B44";
+  var contractabi=[
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_work",
+          "type": "string"
+        }
+      ],
+      "name": "write",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "read",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+  var workcontract;
+  var signer;
+  provider.listAccounts().then(function(accounts){
+    signer=provider.getSigner(accounts[0]); //getting the first account
+    workcontract= new ethers.Contract(  //getting the instance of the contract
+      contractaddress,
+      contractabi,
+      signer
+    );
+  })
+  async function read(){
+    var getwork=workcontract.read();
+    var works=await getwork;
+    console.log(works);
+  }
+  async function write(){
+    let work=document.getElementbyId("work").value;
+    var setworks=workcontract.write(work);
+    await setworks;
+  }
+</script>
